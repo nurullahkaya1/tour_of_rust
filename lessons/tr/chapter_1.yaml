@@ -5,7 +5,7 @@
 
 
     Ayrıca, sizinle konuşan bu sevimli yengecin kim olduğunu merak ediyorsanız ben, 
-    Rust programlama dilinin resmi olmayan maskotu **Ferris**im. 
+    Rust programlama dilinin resmi olmayan maskotu **Ferris**'im. 
     Tanıştığımıza memnun oldum.
 - title: Rust Oyun Alanı
   code: >-
@@ -22,7 +22,7 @@
 
 
     Bir değişkene değer atadığınız anda bu değişkenin türü %99 Rust tarafından bilinir. 
-    Eğer tür otomatik olarak çıkarsanamamışsa değişken türünü kendiniz ekleyebilirsiniz
+    Eğer tür otomatik olarak çıkarsanamamışsa değişken türünü kendiniz ekleyebilirsiniz.
 
 
     Aynı değişken adını tekrar tekrar atayabildiğimize dikkat edin. 
@@ -34,13 +34,13 @@
   code: >-
     https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=723acfe27f79659876e1f7f2eee16a8d
   content_markdown: >
-    Rust hangi değişkenlerin değiştilebilir olduğuna çok dikkat eder. 
+    Rust hangi değişkenlerin değiştirilebilir olduğuna çok dikkat eder. 
     İki tür değişken vardır:
 
     * **mutable** - Derleyici bu tür değişkenlerin hem yazılmasına hem okunmasına izin verir.
     
     * **immutable** - Derleyici bu tür değişkenlerin sadece okunmasına izin verir.
-
+    
     Değişebilir değerler **mut** anahtar sözcüğü ile belirtilir.
         
     İleride bu kavrama daha fazla değineceğiz. Ancak şu an için bu anahtar 
