@@ -179,47 +179,43 @@
       bu işlemlerin `unsafe {...}` anahtar kelimesiyle işaretlenmiş
       ve derleyicinin denetimi dışında tutulan bir blok içinde değerlendirilmesine izin verir. 
       Ve [<span style="color:red; font-weight: bold;">R̸͉̟͈͔̄͛̾̇͜U̶͓͖͋̅Ṡ̴͉͇̃̉̀T̵̻̻͔̟͉́͆Ơ̷̥̟̳̓͝N̶̨̼̹̲͛Ö̵̝͉̖̏̾̔M̶̡̠̺̠̐͜Î̷̛͓̣̃̐̏C̸̥̤̭̏͛̎͜O̶̧͚͖͔̊͗̇͠N̸͇̰̏̏̽̃</span>](https://doc.rust-lang.org/nomicon/) 
-           hakkında konuşurken dikkatli olunmalıdır.
+           hakkında konuşulurken dikkatli olunmalıdır.
   code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=static%20PI%3A%20f64%20%3D%203.1415%3B%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20static%20variables%20can%20also%20be%20scoped%20to%20a%20function%0A%20%20%20%20static%20mut%20SECRET%3A%20%26'static%20str%20%3D%20%22swordfish%22%3B%0A%0A%20%20%20%20%2F%2F%20string%20literals%20have%20a%20'static%20lifetime%0A%20%20%20%20let%20msg%3A%20%26'static%20str%20%3D%20%22Hello%20World!%22%3B%0A%20%20%20%20let%20p%3A%20%26'static%20f64%20%3D%20%26PI%3B%0A%20%20%20%20println!(%22%7B%7D%20%7B%7D%22%2C%20msg%2C%20p)%3B%0A%0A%20%20%20%20%2F%2F%20You%20can%20break%20some%20rules%2C%20but%20you%20must%20be%20explicit%0A%20%20%20%20unsafe%20%7B%0A%20%20%20%20%20%20%20%20%2F%2F%20we%20can%20set%20SECRET%20to%20a%20string%20literal%20because%20it%20is%20also%20%60static%0A%20%20%20%20%20%20%20%20SECRET%20%3D%20%22abracadabra%22%3B%0A%20%20%20%20%20%20%20%20println!(%22%7B%7D%22%2C%20SECRET)%3B%0A%20%20%20%20%7D%0A%7D%0A
-- title: Lifetimes In Data Types
+    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=f95fff1b1bf26d838b05d10ec9dcef04
+- title: Veri Türlerinin Yaşam Süresi
   content_markdown: >
-    Similarly to functions, data types can be parameterized with lifetime
-    specifiers of its members.
+    Gerektiğinde tıpkı işlevlerde olduğu gibi, veri türlerinin sahip olduğu 
+    üye veya alanlar da yaşam süresi belirteçleriyle parametrelendirilir.
+
+    Eğer bir veri türü referanslar içeriyorsa, Rust bu referansların,
+    işaret ettikleri asıl sahiplerinden daha uzun süre var olup olmadığını doğrulamaya çalışır.
 
 
-    Rust validates that the containing data structure of the references never
-    lasts longer than the owners its references point to.
-
-
-    We can't have structs running around with references pointing to
-    nothingness!
+    Bu nedenle Rust derleyicisi, hiçbir şeye işaret etmeyen referansların bulunduğu bir yapıyı kullanmanıza izin vermez.
   code: >-
-    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%3C'a%3E%20%7B%0A%20%20%20%20i%3A%26'a%20i32%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20x%20%3D%2042%3B%0A%20%20%20%20let%20foo%20%3D%20Foo%20%7B%0A%20%20%20%20%20%20%20%20i%3A%20%26x%0A%20%20%20%20%7D%3B%0A%20%20%20%20println!(%22%7B%7D%22%2Cfoo.i)%3B%0A%7D%0A
-- title: Chapter 5 - Conclusion
+    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=24124ef1079ca1f569980202b8354228
+- title: Bölüm 5 - Sonuç
   content_markdown: >
-    Whew, congrats for making it through! I know it's a lot to take in, but you
-    are well
-
-    under way to becoming a Rustacean. Hopefully it's clear how Rust as a
-    language aims to 
-
-    solve many of these common challenges in systems programming:
+    Turun bu bölümüne kadar gelebildiğiniz için bir kutlamayı hak ediyorsunuz: Tebrikler:-)
+    Öğrenilecek çok şey olduğunun ben de farkındayım ama yine de size iyi bir Rustacean olma 
+    yolunda olduğunuzu söylemek istiyorum. Ve umuyorum bir programlama dili olarak Rust'un, 
+    sistem programlama alanında yaygın şekilde karşılaşılan bu zorlukları nasıl çözmeyi 
+    amaçladığı anlaşılabiliyordur:
 
 
-    * Unintentional modification of resources
+    * Kaynakları kasıtsız olarak değiştirmek.
 
-    * Forgetting to deconstruct resources 
+    * Kaynakları serbest bırakmayı unutmak. 
 
-    * Resources accidentally being deconstructed twice
+    * Aynı kaynağı yanlışlıkla iki kere serbest bırakmak.
 
-    * Using resources after they have been deconstructed 
+    * Serbest bırakılan kaynakları kullanmaya çalışmak. 
 
-    * Data races caused by writing to resources while others are reading from
-    resources 
+    * Diğer iş parçacıkları kaynakları okurken, aynı kaynağa yazma 
+      girişiminin sebep olduğu veri yarışları. 
 
-    * Seeing clearly areas of the code where the compiler can’t make guarantees
+    * Derleyicinin güvenlik garantisi sunmadığı alanları açıkça belirtmemek.
 
 
-    In the next chapter we'll apply some of this knowledge as we look at how
-    Rust handles text.
+    Öğrendiklerimizden bazılarını, Rust'un metin verilerini nasıl işlediğini
+    tartıştığımız bir sonraki bölümümüzde uygulamaya sokacağız.
