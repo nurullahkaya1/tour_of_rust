@@ -1,0 +1,223 @@
+- title: Bölüm 5 - Mülkiyet & Borçlanma
+  content_markdown: >
+    Diğer programlama dilleriyle karşılaştırıldığında Rust'ın, benzersiz bir bellek yönetim paradigmasına
+    sahip olduğu görülür. Konuyu sıkılmadan ve kolaylıkla takip edebilmeniz için, 
+    derleyicinin davranışlarını ve denetim düzeneğini birer birer ele almak niyetindeyiz. 
+    Bölüm boyunca karşılaşacağımız kuralların, hayatımızı zorlaştırmak için değil, 
+    önümüze çıkabilecek çeşitli hataları önlemek için koyulduğunu anlamanız önemlidir.
+- title: Mülkiyet
+  content_markdown: >
+    Bir türü örneklemek ve onu bir değişken adıyla **bağlamak**, Rust derleyicisinin,
+    **değişken var olduğu sürece** doğrulamak zorunda kalacağı bellek kaynağı oluşturur. 
+    Bağlı değişkenimiz ise kaynağın **sahibi** olarak adlandırılır.
+  code: >-
+    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=5f41134bac29b9c4080ec00904b86538
+- title: Kapsam Tabanlı Kaynak Yönetimi
+  content_markdown: |
+    Rust, bir kaynağın sonlandırılarak belleğe iade edilebilmesi için kapsamın bitiş noktasını baz alır.
+
+    Bu sonlandırma ve iade etme işlemine **drop** yani değişkenin düşürülmesi denir.
+
+    Bellek ayrıntıları:
+    
+    
+    * Rust'ın çöp toplama özelliği yoktur.
+    
+    
+    * C++'tan aşina olduğumuz bu yaklaşım, *Resource Aquisition Is Initialization* (RAII) olarak da bilinir.
+  code: https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=861c81bf9e474e5ecc35f9805d15eb83
+- title: Düşürmek Hiyerarşiktir
+  content_markdown: >
+    Bir yapı düşürüldüğünde önce yapının kendisi, ardından alt yapısını oluşturan tüm parçalar birer birer serbest bırakılır.
+
+    Bellek ayrıntıları:
+
+    * Rust, kaynakları otomatik olarak serbest bırakarak bellek sızıntılarının azaltılmasına yardımcı olur.
+
+    * Bellek kaynakları sadece bir kez serbest bırakılabilir
+  code: >-
+    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=4289af6f547bdf86e374f16f8bde1fca
+- title: Mülkiyetin Taşınması
+  content_markdown: >
+    Kaynağın sahibi değişken, herhangi bir işleve argüman olarak iletildiğinde, 
+    o kaynağın mülkiyeti işlev parametresine taşınır. Bu taşınma işlemine **move** adı verilir.
+
+
+    Bir değişkenin sahip olduğu kaynak taşındıktan sonra, orijinal işlevdeki değişken artık kullanılamaz.
+
+
+    Bellek detayları:
+
+    * Bu taşınma sırasında, taşınacak değerin yığın belleği, işlev çağrısı parametre yığın belleğine kopyalanır.
+  code: >-
+    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=2ef2fa06e1722653cfd7b89704c41eaf
+- title: Mülkiyetin Geri Verilmesi
+  content_markdown: |
+    İşlevler, bir kaynağın mülkiyetini de döndürebilir.
+  code: >-
+    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=23087437f922223778aff3b8036a5ced
+- title: Referanslar Yardımıyla Mülkiyeti Ödünç Almak
+  content_markdown: |
+    Referanslar bir kaynağın mülkiyetini `&` işleci yardımıyla ödünç almamızı sağlar.
+
+    Tıpkı diğer kaynaklar gibi referanslar da sonlandırılarak serbest bırakılır.
+  code: >-
+    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=8072834cc36b79036959a34b8b72cbdc
+- title: Referanslar Yardımıyla Değişebilen Mülkiyeti Ödünç Almak
+  content_markdown: >
+    Yine bir referans olanağı olan `&mut` işleci yardımıyla, 
+    değişebilen bir kaynağın mülkiyetini ödünç alabiliriz.
+
+
+    Bir kaynağı sahibi, kaynak değişebilen referansla ödünç alındığında, 
+    kaynağın mülkiyeti geri verilene kadar taşınamaz ve değiştirilemez.
+
+
+    Bellek ayrıntıları:
+
+    * Rust, bir kaynağın birden fazla yerden değiştirilme olasılığını,
+    veri yarışlarına neden olabileceğinden dolayı engeller.
+  code: >-
+    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=ebcab426b85e6c2031c54f18894689bc
+- title: Referansı Kaldırmak - Dereferencing
+  content_markdown: >
+    `&mut` referansı kullanıldığı durumlarda, 
+    kaynak sahibinin tuttuğu değer `*` işleci ile yeniden ayarlanabilir.
+
+
+    Sonraki bölümlerde inceleyeceğimiz gibi, yine bu işleç yardımıyla, 
+    kopyalama özelliğine sahip bir türün kopyası da alınabilir.
+  code: >-
+    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=045dd6870e253ec70b42c3832f88740a
+- title: Ödünç Alınan Verinin Taşınması
+  content_markdown: >
+    Rust'in referans kuralları en iyi aşağıdaki şekilde özetlenebilir:
+
+
+    * Rust sadece; ya bir tane `&mut` değişebilir referansın,
+      **ya da** dilediğiniz sayıda değişebilir olmayan referansın bulunmasına izin verir. 
+      Aynı anda bunların **her ikisinin de olmasına** izin verilmez!
+
+    * Bir referans hiç bir zaman kaynağın asıl sahibinden **daha uzun süre yaşatılamaz**!
+
+
+    Bir işleve parametre olarak aktarılan referanslar, yalnızca işlev kapsamı içinde var olacaklarından,
+    herhangi bir sorun teşkil etmezler.
+
+
+    Bellek detayları:
+
+    * İlk kuralımız "Eş zamanlı programlarda sıklıkla karşılaştığımız, 
+      bir veriye aynı anda erişmeye çalışan birden fazla iş parçasının yarattığı kaotik durum"
+      olarak özetleyebileceğimiz **veri yarışlarını engeller**.
+
+    * İkinci kuralımız ise "C programlama dilinde sarkan işaretçiler olarak bilinen",
+      **var olmayan verilere atıfta bulunan** referansların kötüye kullanılmalarının önüne geçer.
+  code: >-
+    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=7daf3d8bea8cea0f0379f99e53014c5d
+- title: Referansların Referansları
+  content_markdown: |
+    Bir referans, başka referans parçaları üzerinde bile kullanılabilir. 
+    Başka bir ifadeyle, bir referans diğer bir referansa atıfta bulunabilir.
+  code: >-
+    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=2a8e8895d15c6c999f7420a2bf47b1cd
+- title: Yaşam Sürelerinin Açıkça Belirtilmesi
+  content_markdown: >
+    Her ne kadar bu durum açıkça gösterilmiyor olsa da, 
+    derleyici her değişkenin yaşam süresine çok dikkat eder ve bir referansın hiçbir zaman, 
+    sahibinden daha süre var olmadığını doğrulamaya çalışır.
+    
+
+    Rust'ta işlev parametrelerinin yaşam sürelerini açıkça belirtebilirsiniz. 
+    Bu açık bildirim, işlev parametreleri ve dönüş değerlerinin,
+    aynı yaşam sürelerini paylaşmalarına izin verir.
+
+    
+    Yaşam süresi belirteçleri daima `'` ile başlar ve geleneksel olarak `'a` şeklinde belirtilir.
+  code: >-
+    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=9950081a6cc782eb1a5cb981cbf059b9
+- title: Çoklu Yaşam Süreleri
+  content_markdown: >
+    Yaşam süresi belirteçleri, derleyicinin yaşam sürelerini kendi başına çıkarsayamayacağı
+    bazı senaryolarda, işlev parametreleri ve dönüş değeri yaşam sürelerini açıkça belirtmemize olanak sağlar. 
+
+  code: >-
+    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=77d9498c956f35fe8db079d1697735a0
+- title: Statik Yaşam Süreleri
+  content_markdown: >
+    Açık tür bildirimiyle tanımlanan **static** değişkenler, 
+    derleme zamanında oluşturulan ve programın başından sonuna kadar var olan bellek kaynaklarıdır.
+
+
+    **Statik yaşam süresi** ise bellekteki kaynağın, programın yürütülmesi sona erene kadar, 
+    yani mümkün olan en uzun süre boyunca yaşatılması anlamına gelmektedir. 
+    Bu tanıma göre, statik yaşam süresine sahip bazı kaynakların çalışma zamanında
+    oluşturulabileceğini göz önünde bulundurmamız gerekir.
+
+
+    Statik Yaşam sürelerine sahip olan kaynaklar, 
+    özel bir tanımlayıcı olan `'static` belirteciyle bildirilirler.
+
+
+    Ve `'static` kaynaklar hiç bir zaman **düşürülmezler**.
+
+
+    Eğer statik yaşam süreleri olan kaynaklar referans içeriyorlarsa, 
+    başka bir yaşam süresi yeterince uzun olamayacağından, 
+    bu referanslar da `'static` olarak belirtilmelidirler.
+
+
+    Bellek ayrıntıları:
+
+
+    * Modifying static variables is inherently dangerous because they are
+    globally accessable to be read from by anyone
+      introducing the possibility of a data race. We'll talk about the challenges of global data later.
+    * Rust allows the use of `unsafe { ... }` blocks to perform some operations
+    that the compiler cannot make memory guarantees about. The [<span
+    style="color:red; font-weight:
+    bold;">R̸͉̟͈͔̄͛̾̇͜U̶͓͖͋̅Ṡ̴͉͇̃̉̀T̵̻̻͔̟͉́͆Ơ̷̥̟̳̓͝N̶̨̼̹̲͛Ö̵̝͉̖̏̾̔M̶̡̠̺̠̐͜Î̷̛͓̣̃̐̏C̸̥̤̭̏͛̎͜O̶̧͚͖͔̊͗̇͠N̸͇̰̏̏̽̃</span>](https://doc.rust-lang.org/nomicon/)
+    should not be talked about casually.
+  code: >-
+    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=static%20PI%3A%20f64%20%3D%203.1415%3B%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F%2F%20static%20variables%20can%20also%20be%20scoped%20to%20a%20function%0A%20%20%20%20static%20mut%20SECRET%3A%20%26'static%20str%20%3D%20%22swordfish%22%3B%0A%0A%20%20%20%20%2F%2F%20string%20literals%20have%20a%20'static%20lifetime%0A%20%20%20%20let%20msg%3A%20%26'static%20str%20%3D%20%22Hello%20World!%22%3B%0A%20%20%20%20let%20p%3A%20%26'static%20f64%20%3D%20%26PI%3B%0A%20%20%20%20println!(%22%7B%7D%20%7B%7D%22%2C%20msg%2C%20p)%3B%0A%0A%20%20%20%20%2F%2F%20You%20can%20break%20some%20rules%2C%20but%20you%20must%20be%20explicit%0A%20%20%20%20unsafe%20%7B%0A%20%20%20%20%20%20%20%20%2F%2F%20we%20can%20set%20SECRET%20to%20a%20string%20literal%20because%20it%20is%20also%20%60static%0A%20%20%20%20%20%20%20%20SECRET%20%3D%20%22abracadabra%22%3B%0A%20%20%20%20%20%20%20%20println!(%22%7B%7D%22%2C%20SECRET)%3B%0A%20%20%20%20%7D%0A%7D%0A
+- title: Lifetimes In Data Types
+  content_markdown: >
+    Similarly to functions, data types can be parameterized with lifetime
+    specifiers of its members.
+
+
+    Rust validates that the containing data structure of the references never
+    lasts longer than the owners its references point to.
+
+
+    We can't have structs running around with references pointing to
+    nothingness!
+  code: >-
+    https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&code=struct%20Foo%3C'a%3E%20%7B%0A%20%20%20%20i%3A%26'a%20i32%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20x%20%3D%2042%3B%0A%20%20%20%20let%20foo%20%3D%20Foo%20%7B%0A%20%20%20%20%20%20%20%20i%3A%20%26x%0A%20%20%20%20%7D%3B%0A%20%20%20%20println!(%22%7B%7D%22%2Cfoo.i)%3B%0A%7D%0A
+- title: Chapter 5 - Conclusion
+  content_markdown: >
+    Whew, congrats for making it through! I know it's a lot to take in, but you
+    are well
+
+    under way to becoming a Rustacean. Hopefully it's clear how Rust as a
+    language aims to 
+
+    solve many of these common challenges in systems programming:
+
+
+    * Unintentional modification of resources
+
+    * Forgetting to deconstruct resources 
+
+    * Resources accidentally being deconstructed twice
+
+    * Using resources after they have been deconstructed 
+
+    * Data races caused by writing to resources while others are reading from
+    resources 
+
+    * Seeing clearly areas of the code where the compiler can’t make guarantees
+
+
+    In the next chapter we'll apply some of this knowledge as we look at how
+    Rust handles text.
